@@ -1,14 +1,23 @@
 var argv = require('optimist').argv;
-var Notifier = require('mail-notifier');
 var inspect = require('util').inspect;
 var fs = require('fs');
 var PushBullet = require('pushbullet');
+var Notifier = require('mail-notifier');
 
+/*
+ * Command line arguments
+ * user: The email address to monitor via IMAP
+ * pass: The email account password
+ * host: The IMAP server address, defaults to Gmail
+ * port: The IMAP port
+ * pbkey: Pushbullet API key for using Pushbullet integration
+ * pbuser: Pushbullet email account to receive notifications
+ */
 var user = argv.email;
 var pass = argv.password;
 var host = argv.host || "imap.gmail.com";
 var port = argv.port || 993;
-var push = argv.pushbullet;
+var pbkey = argv.pushbullet;
 var pbuser = argv.pbuser;
 
 if (!user) {
@@ -45,31 +54,32 @@ function magic(emailBody) {
   function readFile(callback) {
     oldValue = fs.readFileSync('data', 'utf8');
     newValue = oldValue - transactionAmount;
-    
+    newValue.toFixed(2);
+
     return callback(function () {
       return true;
     });
   }
   function writeFile(callback) {
-    if (newValue) {
+    if (newValue) { // Protect against overwriting old value if new value is undefined
       log("New value is " + newValue);
       fs.writeFileSync('data', newValue, 'utf8');
     } else {
-      throw ("Error calculating new value; New Value calculated was: " + newValue);
+      throw ("Error calculating new value; New Value calculated is " + newValue);
     }
     return callback();
   }
-  if (transactionAmount) {
+  if (transactionAmount) { // Only update file if a value was found
     readFile(writeFile); // Callback
   } else {
     log("No transaction to process");
   }
 
-  // Notify
+  // Notify via Pushbullet
   function notify() {
     log("Sending update to Pushbullet user");
-    var pusher = new PushBullet(push);
-    pusher.note(pbuser, "Budget Update", "You have $" + newValue + " remaining to spend this month", function (error, response) {});
+    var pusher = new PushBullet(pbkey);
+    pusher.note(pbuser, "Budget Update", "You have $" + newValue + " left to spend this month", function (error, response) {});
   }
   notify(); // Notify via Pushbullet
 }
