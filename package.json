@@ -1,0 +1,27 @@
+{
+  "name": "budget-reminder",
+  "version": "1.0.0",
+  "description": "A budget tracking utility",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pan1cz/budget-reminder.git"
+  },
+  "author": "Aaron Clark",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pan1cz/budget-reminder/issues"
+  },
+  "homepage": "https://github.com/pan1cz/budget-reminder",
+  "dependencies": {
+    "fs": "0.0.2",
+    "mail-notifier": "^0.2.4",
+    "optimist": "^0.6.1",
+    "pushbullet": "^1.4.3",
+    "type-of-is": "^3.4.0"
+  }
+}
